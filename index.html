@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Health Score Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 1em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+        button {
+            padding: 0.5em 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 1em;
+            padding: 1em;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Vehicle Health Score Calculator</h1>
+        <div class="input-group">
+            <label for="year">Year of the Car:</label>
+            <input type="number" id="year" name="year" min="1900" max="2024">
+        </div>
+        <div class="input-group">
+            <label for="miles">Miles Driven:</label>
+            <input type="number" id="miles" name="miles" min="0">
+        </div>
+        <div id="dtc-inputs">
+            <div class="input-group">
+                <label>DTC Severity and System Impact:</label>
+                <input type="number" class="severity" placeholder="Severity (1-5)" min="1" max="5">
+                <input type="number" class="impact" placeholder="System Impact (1-5)" min="1" max="5">
+            </div>
+        </div>
+        <button onclick="addDTCInput()">Add Another DTC</button>
+        <button onclick="calculateHealthScore()">Calculate Health Score</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function addDTCInput() {
+            const dtcInputs = document.getElementById('dtc-inputs');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <input type="number" class="severity" placeholder="Severity (1-5)" min="1" max="5">
+                <input type="number" class="impact" placeholder="System Impact (1-5)" min="1" max="5">
+            `;
+            dtcInputs.appendChild(div);
+        }
+
+        function calculateHealthScore() {
+            const year = parseInt(document.getElementById('year').value);
+            const miles = parseInt(document.getElementById('miles').value);
+            const severities = document.querySelectorAll('.severity');
+            const impacts = document.querySelectorAll('.impact');
+
+            let adjustedTotalDTCScore = 0;
+
+            severities.forEach((severity, index) => {
+                const impact = impacts[index].value;
+                adjustedTotalDTCScore += severity.value * impact;
+            });
+
+            const normalizedAdjustedDTCScore = (adjustedTotalDTCScore / 175) * 100;
+
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - year;
+            console.log(age, currentYear)
+            let yearPoints = 0;
+            if (age > 10) {
+                yearPoints += (age - 10) * 0.2;
+                yearPoints += 3 * 1.0;
+                yearPoints += 2 * 0.8;
+                yearPoints += 2 * 0.5;
+                yearPoints += 2 * 0.33;
+            } else if (age > 7) {
+                yearPoints += (age - 7) * 1.0;
+                yearPoints += 2 * 0.8;
+                yearPoints += 2 * 0.5;
+                yearPoints += 2 * 0.33;
+            } else if (age > 5) {
+                yearPoints += (age - 5) * 0.8;
+                yearPoints += 2 * 0.5;
+                yearPoints += 2 * 0.33;
+            } else if (age > 3) {
+                yearPoints += (age - 3) * 0.5;
+                yearPoints += 2 * 0.33;
+            } else if (age > 0) {
+                yearPoints += age * 0.33;
+            }
+            console.log(yearPoints)
+
+            let mileagePoints = 0;
+            if (miles > 150000) {
+                mileagePoints += (miles - 150000) * 0.25 / 1000;
+                mileagePoints += 50000 * 0.1 / 1000;
+                mileagePoints += 30000 * 0.1 / 1000;
+                mileagePoints += 20000 * 0.075 / 1000;
+                mileagePoints += 20000 * 0.075 / 1000;
+                mileagePoints += 15000 * 0.05 / 1000;
+                mileagePoints += 10000 * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+
+            } else if (miles > 70000) {
+                mileagePoints += (miles - 70000) * 0.1 / 1000;
+                mileagePoints += 20000 * 0.075 / 1000;
+                mileagePoints += 20000 * 0.075 / 1000;
+                mileagePoints += 15000 * 0.05 / 1000;
+                mileagePoints += 10000 * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+            } else if (miles > 50000) {
+                mileagePoints += (miles - 50000) * 0.075 / 1000;
+                mileagePoints += 20000 * 0.075 / 1000;
+                mileagePoints += 15000 * 0.05 / 1000;
+                mileagePoints += 10000 * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+            } else if (miles > 30000) {
+                mileagePoints += (miles - 30000) * 0.075 / 1000;
+                mileagePoints += 15000 * 0.05 / 1000;
+                mileagePoints += 10000 * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+            } else if (miles > 15000) {
+                mileagePoints += (miles - 15000) * 0.05 / 1000;
+                mileagePoints += 10000 * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+            } else if (miles > 5000) {
+                mileagePoints += (miles - 5000) * 0.05 / 1000;
+                mileagePoints += 5000 * 0.025 / 1000;
+            } else if (miles > 0) {
+                mileagePoints = miles * 0.025 / 1000;
+            }
+            else{
+                mileagePoints =0;
+            }
+
+            let vehicleHealthScore = 100 - normalizedAdjustedDTCScore - yearPoints - mileagePoints;
+            console.log(vehicleHealthScore)
+            vehicleHealthScore = Math.round(vehicleHealthScore);
+
+            if (vehicleHealthScore < 10) {
+                vehicleHealthScore = 10;
+            }
+
+            document.getElementById('result').innerHTML = `<h2>Vehicle Health Score: ${vehicleHealthScore}</h2>`;
+        }
+    </script>
+</body>
+
+</html>
